@@ -145,6 +145,17 @@ export default function Home() {
           (el as HTMLElement).style.backgroundColor = bg;
           (el as HTMLElement).style.border = border;
         });
+
+        // Update metadata dynamically (this will only work with specific meta tags)
+        const metaTags = document.getElementsByTagName('meta');
+        for (let i = 0; i < metaTags.length; i++) {
+          if (metaTags[i].getAttribute('property') === 'og:image') {
+            metaTags[i].setAttribute('content', dataUrl);
+          }
+          if (metaTags[i].getAttribute('name') === 'twitter:image') {
+            metaTags[i].setAttribute('content', dataUrl);
+          }
+        }
       } catch (err) {
         console.error('Error generating image:', err);
       }
@@ -153,10 +164,10 @@ export default function Home() {
 
   const shareToX = () => {
     if (imagePreview) {
-      // Prepare share content
-      const text = "I want this!";
+      // Update the page's metadata when sharing
+      const text = "Check out this feature request!";
       
-      // Construct X web intent URL with proper parameters
+      // Construct X web intent URL with the image preview
       const intentUrl = new URL("https://x.com/intent/post");
       intentUrl.searchParams.append("text", text);
       intentUrl.searchParams.append("url", window.location.href);
@@ -248,7 +259,7 @@ export default function Home() {
                   );
                 }}
                 onClick={() => handleTextBoxSelect(box.id)}
-                className={`group ${box.isSelected ? 'ring-2 ring-blue-500' : ''}`}
+                className="group"
               >
                 <div className="text-box w-full h-full bg-white/90 backdrop-blur-sm border border-gray-300 rounded-lg px-3 py-2 shadow-lg flex items-center justify-between overflow-hidden">
                   <span 
@@ -325,73 +336,74 @@ export default function Home() {
             Change Image
           </Button>
           <Dialog>
-        <DialogTrigger asChild>
-          <Button 
-            variant="outline" 
-            className="gap-2"
-            onClick={generateImage}
-          >
-            <Share2 className="h-4 w-4" />
-            Share
-          </Button>
-        </DialogTrigger>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>Share Meme</DialogTitle>
-            <DialogDescription>
-              Share your creation on your favorite social platform
-            </DialogDescription>
-          </DialogHeader>
-          
-          {imagePreview && (
-            <div className="flex flex-col gap-4">
-              <div className="relative aspect-square w-full">
-                <Image
-                  src={imagePreview}
-                  alt="Meme preview"
-                  className="rounded-lg object-contain"
-                  fill
-                />
-              </div>
+            <DialogTrigger asChild>
+              <Button 
+                variant="outline" 
+                className="gap-2"
+                onClick={generateImage}
+              >
+                <Share2 className="h-4 w-4" />
+                Share
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-md">
+              <DialogHeader>
+                <DialogTitle>Share Meme</DialogTitle>
+                <DialogDescription>
+                  Share your creation or download it
+                </DialogDescription>
+              </DialogHeader>
               
-              <Tabs defaultValue="x" className="w-full">
-                <TabsList className="grid w-full grid-cols-3">
-                  <TabsTrigger value="x">X</TabsTrigger>
-                  <TabsTrigger value="bluesky">Bluesky</TabsTrigger>
-                  <TabsTrigger value="threads">Threads</TabsTrigger>
-                </TabsList>
-                <TabsContent value="x">
-                  <Button onClick={shareToX} className="w-full gap-2">
-                    <svg 
-                      viewBox="0 0 24 24" 
-                      className="h-4 w-4" 
-                      aria-hidden="true"
+              {imagePreview && (
+                <div className="flex flex-col gap-4">
+                  <div className="relative aspect-square w-full">
+                    <Image
+                      src={imagePreview}
+                      alt="Meme preview"
+                      className="rounded-lg object-contain"
+                      fill
+                    />
+                  </div>
+                  
+                  <div className="flex flex-col gap-2">
+                    <Button onClick={shareToX} className="w-full gap-2 focus:ring-0 focus-visible:ring-0">
+                      <svg 
+                        viewBox="0 0 24 24" 
+                        className="h-4 w-4" 
+                        aria-hidden="true"
+                      >
+                        <path 
+                          fill="currentColor" 
+                          d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"
+                        />
+                      </svg>
+                      Share on X
+                    </Button>
+                    <Button 
+                      variant="secondary"
+                      onClick={() => downloadImage(imagePreview)} 
+                      className="w-full gap-2 border-0 focus:ring-0 focus-visible:ring-0"
                     >
-                      <path 
-                        fill="currentColor" 
-                        d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"
-                      />
-                    </svg>
-                    Share on X
-                  </Button>
-                </TabsContent>
-                <TabsContent value="bluesky">
-                  <Button onClick={shareToBluesky} className="w-full gap-2">
-                    <Send className="h-4 w-4" />
-                    Share on Bluesky
-                  </Button>
-                </TabsContent>
-                <TabsContent value="threads">
-                  <Button onClick={shareToThreads} className="w-full gap-2">
-                    <Send className="h-4 w-4" />
-                    Share on Threads
-                  </Button>
-                </TabsContent>
-              </Tabs>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
+                      <svg 
+                        className="h-4 w-4" 
+                        fill="none" 
+                        stroke="currentColor" 
+                        viewBox="0 0 24 24"
+                      >
+                        <path 
+                          strokeLinecap="round" 
+                          strokeLinejoin="round" 
+                          strokeWidth={2} 
+                          d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                        />
+                      </svg>
+                      Download Image
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
 
