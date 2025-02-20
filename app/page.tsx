@@ -250,10 +250,17 @@ export default function Home() {
                 onClick={() => handleTextBoxSelect(box.id)}
                 className={`group ${box.isSelected ? 'ring-2 ring-blue-500' : ''}`}
               >
-                <div className="text-box w-full h-full bg-white/90 backdrop-blur-sm border border-gray-300 rounded-lg px-3 py-2 shadow-lg flex items-center justify-between">
+                <div className="text-box w-full h-full bg-white/90 backdrop-blur-sm border border-gray-300 rounded-lg px-3 py-2 shadow-lg flex items-center justify-between overflow-hidden">
                   <span 
-                    className="text-lg font-semibold flex-1 text-center"
-                    style={{ fontSize: `${box.fontSize}px` }}
+                    className="text-lg font-semibold flex-1 text-center overflow-hidden text-ellipsis break-words"
+                    style={{ 
+                      fontSize: `${box.fontSize}px`,
+                      lineHeight: `${box.fontSize * 1.2}px`,
+                      maxHeight: '100%',
+                      display: '-webkit-box',
+                      WebkitLineClamp: '3',
+                      WebkitBoxOrient: 'vertical'
+                    }}
                   >
                     {box.text}
                   </span>
